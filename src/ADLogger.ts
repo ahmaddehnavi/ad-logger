@@ -1,122 +1,180 @@
 import ADConsoleLogger from "./ADConsoleLogger";
-import IADLogger from "./IADLogger";
+import IADLogger, {ADLoggerParamType} from "./IADLogger";
 import autobind from "autobind-decorator";
 
 export enum LogLevel {
-    disabled,
-    reportError,
-    reportEvent,
-    error,
-    warn,
-    log,
-    info,
-    debug,
+    disabled = 0,
+    report = 100,
+    error = 200,
+    warn = 300,
+    log = 400,
+    info = 500,
+    debug = 600,
 }
 
+export type ADLoggerConfigType = {
+    logger?: IADLogger
+    tag: string
+    reportEnabled: boolean
+    errorEnabled: boolean
+    warnEnabled: boolean
+    logEnabled: boolean
+    infoEnabled: boolean
+    debugEnabled: boolean
+}
+
+export type MessageType = string | boolean | number
+
 @autobind
-class ADLogger implements IADLogger {
-    protected _logger?: IADLogger = new ADConsoleLogger();
-    public enabled = {
-        reportError: true,
-        reportEvent: true,
-        error: true,
-        warn: true,
-        log: true,
-        info: true,
-        debug: true,
+export class ADLogger {
+    protected _config: ADLoggerConfigType = {
+        logger: new ADConsoleLogger(),
+        tag: 'ADLogger',
+        reportEnabled: true,
+        errorEnabled: true,
+        warnEnabled: true,
+        logEnabled: true,
+        infoEnabled: true,
+        debugEnabled: true,
     };
 
-    public readonly LogLevel = LogLevel;
+    constructor(config: Partial<ADLoggerConfigType> = {}) {
+        this._config = {
+            ...this._config,
+            ...config
+        };
+    }
 
-    public Logger = {
+    public readonly LogLevel = LogLevel;
+    public readonly Logger = {
         Disabled: undefined,
         Console: new ADConsoleLogger
     };
 
+
+    setConfig(config: Partial<ADLoggerConfigType>) {
+        this._config = {
+            ...this._config,
+            ...config
+        };
+        return this;
+    }
+
     setLogLevel(logLevel: LogLevel) {
-        this.enabled = {
-            reportEvent: logLevel >= LogLevel.reportEvent,
-            reportError: logLevel >= LogLevel.reportError,
-            error: logLevel >= LogLevel.error,
-            warn: logLevel >= LogLevel.warn,
-            log: logLevel >= LogLevel.log,
-            info: logLevel >= LogLevel.info,
-            debug: logLevel >= LogLevel.debug,
+        this._config = {
+            ...this._config,
+            reportEnabled: logLevel >= LogLevel.report,
+            errorEnabled: logLevel >= LogLevel.error,
+            warnEnabled: logLevel >= LogLevel.warn,
+            logEnabled: logLevel >= LogLevel.log,
+            infoEnabled: logLevel >= LogLevel.info,
+            debugEnabled: logLevel >= LogLevel.debug,
         };
         return this;
     }
 
     setLogger(logger?: IADLogger) {
-        this._logger = logger;
+        this._config.logger = logger;
     }
 
-    debug(...p: Array<any>) {
-        this.enabled.debug &&
-        this._logger &&
-        this._logger.log(...p);
+    protected prepareParam(p: Partial<{
+        message: MessageType, tag: string,
+        params: Array<any>
+        error?: Error
+    }>): ADLoggerParamType {
+        return {
+            tag: this._config.tag,
+            message: String(p.message) || '',
+            params: p.params || [],
+            error: p.error
+        }
+    }
+
+    withTag(tag: string) {
+        return new ADLogger({
+            ...this._config,
+            tag: tag
+        });
+    }
+
+    setTag(tag: string) {
+        this._config = {
+            ...this._config,
+            tag: tag
+        };
+    }
+
+    debug(message: MessageType, ...params: Array<any>) {
+        this._config.debugEnabled &&
+        this._config.logger &&
+        this._config.logger.debug(this.prepareParam({
+            message,
+            params
+        }));
         return this;
     }
 
-    info(...p: Array<any>) {
-        this.enabled.info &&
-        this._logger &&
-        this._logger.log(...p);
+    info(message: MessageType, ...params: Array<any>) {
+        this._config.infoEnabled &&
+        this._config.logger &&
+        this._config.logger.info(this.prepareParam({
+            message,
+            params
+        }));
         return this;
     }
 
-    log(...p: Array<any>) {
-        this.enabled.log &&
-        this._logger &&
-        this._logger.log(...p);
+    log(message: MessageType, ...params: Array<any>) {
+        this._config.logEnabled &&
+        this._config.logger &&
+        this._config.logger.log(this.prepareParam({
+            message,
+            params
+        }));
         return this;
     }
 
-    warn(...p: Array<any>) {
-        this.enabled.warn &&
-        this._logger &&
-        this._logger.warn(...p);
+    warn(message: MessageType, error?: Error, ...params: Array<any>) {
+        this._config.warnEnabled &&
+        this._config.logger &&
+        this._config.logger.warn(this.prepareParam({
+            message,
+            params,
+            error
+        }));
         return this;
     }
 
-    error(...p: Array<any>) {
-        this.enabled.error &&
-        this._logger &&
-        this._logger.error(...p);
+    error(message: MessageType, error?: Error, ...params: Array<any>) {
+        this._config.errorEnabled &&
+        this._config.logger &&
+        this._config.logger.error(this.prepareParam({
+            message,
+            params,
+            error
+        }));
+        return this;
+    }
+
+
+    report(message: MessageType, error?: Error, ...params: Array<any>) {
+        this._config.reportEnabled &&
+        this._config.logger &&
+        this._config.logger.report(this.prepareParam({
+            message,
+            params,
+            error
+        }));
         return this;
     }
 
     clear() {
-        this._logger &&
-        this._logger.clear();
-        return this;
-    }
-
-    intent(intent: number) {
-        this.enabled.error &&
-        this._logger &&
-        this._logger.intent(intent);
-        return this;
-    }
-
-    reportError(e: Error) {
-        this.enabled.reportError &&
-        this._logger &&
-        this._logger.reportError(e);
-        return this;
-    }
-
-    reportEvent(name: string, props?: { [p: string]: string | number | boolean }) {
-        this.enabled.reportEvent &&
-        this._logger &&
-        this._logger.reportEvent(name, props);
+        this._config.logger &&
+        this._config.logger.clear();
         return this;
     }
 
 }
 
 const ADLoggerInstance = new ADLogger();
-/**
- * @deprecated
- */
-export const log = ADLoggerInstance.log;
 export default ADLoggerInstance;

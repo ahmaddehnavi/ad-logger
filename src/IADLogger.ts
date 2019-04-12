@@ -1,24 +1,21 @@
+export type ADLoggerParamType = {
+    tag: string,
+    message: string
+    params: Array<any>
+    error?: Error
+}
 export default interface IADLogger {
-    intent(intent: number);
+    debug(p: ADLoggerParamType);
 
-    debug(...p: Array<any>);
+    info(p: ADLoggerParamType);
 
-    info(...p: Array<any>);
+    log(p: ADLoggerParamType);
 
-    log(...p: Array<any>);
+    error(p: ADLoggerParamType);
 
-    error(...p: Array<any>);
+    report(p: ADLoggerParamType);
 
-    warn(...p: Array<any>);
-
-    reportError(e: Error);
-
-    reportEvent(
-        name: string,
-        props?: {
-            [key: string]: string | number | boolean
-        }
-    );
+    warn(p: ADLoggerParamType);
 
     clear();
 }

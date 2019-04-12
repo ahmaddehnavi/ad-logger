@@ -1,24 +1,25 @@
-import IADLogger from "./IADLogger";
+import IADLogger, {ADLoggerParamType} from "./IADLogger";
 
 export default class ADBaseLogger implements IADLogger {
     clear() {
     }
 
-    error(...p: Array<any>) {
+    debug(p: ADLoggerParamType) {
     }
 
-    info(...p: Array<any>) {
+    error(p: ADLoggerParamType) {
     }
 
-    log(...p: Array<any>) {
+    info(p: ADLoggerParamType) {
     }
 
-    warn(...p: Array<any>) {
+    log(p: ADLoggerParamType) {
     }
 
-    intent(intent: number) {
+    warn(p: ADLoggerParamType) {
     }
 
-    debug(...p: Array<any>) {
+    report(p: ADLoggerParamType) {
     }
+
 }

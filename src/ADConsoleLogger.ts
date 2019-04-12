@@ -1,57 +1,32 @@
-import IADLogger from "./IADLogger";
+import IADLogger, {ADLoggerParamType} from "./IADLogger";
 
 export default class ADConsoleLogger implements IADLogger {
-    private _intent = '';
-
-    /**
-     * @deprecated
-     * @param intent
-     */
-    intent(intent: number) {
-        this._intent = new Array(intent * 2 + 1)
-            .map(() => ' ')
-            .join(' ');
-        return this;
-    }
-
-    debug(...p: Array<any>) {
-        console.log(this._intent, ...p);
-        return this;
-    }
-
-    info(...p: Array<any>) {
-        console.log(this._intent, ...p);
-        return this;
-    }
-
-    log(...p: Array<any>) {
-        console.log(this._intent, ...p);
-        return this;
-    }
-
-    error(...p: Array<any>) {
-        console.error(this._intent, ...p);
-        return this;
-    }
-
-    warn(...p: Array<any>) {
-        console.warn(this._intent, ...p);
-        return this;
-    }
-
     clear() {
-        console.clear();
-        return this;
+        console.clear()
     }
 
-    reportError(e: Error) {
-        console.error('Report Error :', e);
-        return this;
+    debug(p: ADLoggerParamType) {
+        console.debug(p.tag, p.message, ...p.params);
     }
 
-    reportEvent(name: string, props?: { [p: string]: string | number | boolean }) {
-        console.log('Report Event :', name, props);
-        return this;
+    error(p: ADLoggerParamType) {
+        console.error(p.tag, p.message, ...p.params);
+    }
+
+    report(p: ADLoggerParamType) {
+        console.error(p.tag, p.message, p.error, ...p.params);
+    }
+
+    info(p: ADLoggerParamType) {
+        console.info(p.tag, p.message, ...p.params);
+    }
+
+    log(p: ADLoggerParamType) {
+        console.log(p.tag, p.message, ...p.params);
+    }
+
+    warn(p: ADLoggerParamType) {
+        console.warn(p.tag, p.message, ...p.params);
     }
 
 }
