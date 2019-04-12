@@ -1,9 +1,12 @@
 {
   "name": "ad-logger",
-  "version": "1.0.0",
+  "version": "0.0.4",
   "description": "Another simple js logger library.",
   "repository": "https://github.com/ahmaddehnavi/ad-logger.git",
-  "main": "index.js",
+  "main": "build/index.js",
+  "files": [
+    "build"
+  ],
   "author": "Ahmad Dehnavi",
   "license": "MIT",
   "private": false,
