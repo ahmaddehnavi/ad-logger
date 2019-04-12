@@ -1,0 +1,17 @@
+{
+  "name": "ad-logger",
+  "version": "1.0.0",
+  "description": "Another simple js logger library.",
+  "repository": "https://github.com/ahmaddehnavi/ad-logger.git",
+  "main": "index.js",
+  "author": "Ahmad Dehnavi",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "autobind-decorator": "^2.4.0",
+    "tslib": "^1.9.3"
+  },
+  "devDependencies": {
+    "tslint-clean-code": "^0.2.9"
+  }
+}
