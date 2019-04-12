@@ -3,6 +3,10 @@ import IADLogger from "./IADLogger";
 export default class ADConsoleLogger implements IADLogger {
     private _intent = '';
 
+    /**
+     * @deprecated
+     * @param intent
+     */
     intent(intent: number) {
         this._intent = new Array(intent * 2 + 1)
             .map(() => ' ')
