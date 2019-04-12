@@ -1,6 +1,6 @@
 {
   "name": "ad-logger",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Another simple js logger library.",
   "repository": "https://github.com/ahmaddehnavi/ad-logger.git",
   "main": "build/index.js",
